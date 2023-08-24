@@ -68,14 +68,21 @@ func LogIn(c *gin.Context) {
 		return
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"sub": user.ID,
-		"exp": time.Now().Add(time.Hour * 24 * 1).Unix(),
+		"email": user.Email,
+		"sub":   user.ID,
+		"exp":   time.Now().Add(time.Hour * 24 * 1).Unix(),
 	})
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid email or password"})
 		return
 	}
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 
+}
+func Validate(c *gin.Context) {
+	user, _ := c.Get("user")
+	c.JSON(http.StatusOK, gin.H{"message": user})
 }
