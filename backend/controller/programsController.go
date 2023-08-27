@@ -120,18 +120,28 @@ func UpdateProgram(c *gin.Context) {
 	}
 	userRole := userInstance.Role.Role_Name
 
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid body re-enter again",
+		})
+		return
+	}
+
 	if userRole != "admin" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
 		return
 	}
 	id := c.Param("id")
 	program_id, _ := strconv.Atoi(id)
-	//my_program := model.Program{Id: program_id}
-	program := model.Program{Id: program_id, Program_name: body.Program_name, Description: body.Description, Application_deadline: time.Now().AddDate(0, 0, body.NumberOfDays)}
-	// initializers.DB.First(&my_program)
-	// my_program.Program_name = body.Program_name
-	// my_program.Description = body.Description
-	// my_program.Application_deadline = time.Now().AddDate(0, 0, body.NumberOfDays)
+
+	var program model.Program
+	if err := initializers.DB.First(&program, program_id).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Program not found"})
+		return
+	}
+	program.Application_deadline = time.Now().AddDate(0, 0, body.NumberOfDays)
+	program.Description = body.Description
+	program.Program_name = body.Program_name
 	result := initializers.DB.Save(&program)
 	//result := initializers.DB.Where("id=?", program_id).Updates(&program)
 	if result == nil {

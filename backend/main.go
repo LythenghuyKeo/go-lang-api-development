@@ -14,6 +14,7 @@ func init() {
 	initializers.SyncDatabase()
 }
 func main() {
+	initializers.SyncDatabase()
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}
@@ -31,6 +32,18 @@ func main() {
 	//Program Page Route
 	programroute := router.Group("/api")
 	routes.SetUpProgramRoute(programroute)
+
+	//Application Page Route
+	applicationroute := router.Group("/api")
+	routes.SetUpApplicationRoute(applicationroute)
+
+	//Personal Info Page Route
+	personalInforoute := router.Group("/api")
+	routes.SetUpPersonalInfoRoute(personalInforoute)
+
+	//Document Page route
+	documentroute := router.Group("/api")
+	routes.SetUpDocumentRoute(documentroute)
 
 	router.Run()
 }
