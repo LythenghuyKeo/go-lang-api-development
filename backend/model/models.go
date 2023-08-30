@@ -12,9 +12,10 @@ type User struct {
 	Name  string `gorm:"uniqueIndex:true;not null;column:name;unique"`
 	Email string `gorm:"uniqueIndex:true;not null;column:email;unique"`
 
-	Password string `gorm:"uniqueIndex:false;not null;column:password;"`
-	Role_ID  int
-	Role     Role `gorm:"foreignkey:Role_ID;references:Id"`
+	Password    string `gorm:"uniqueIndex:false;not null;column:password;"`
+	Role_ID     int
+	Role        Role `gorm:"foreignkey:Role_ID;references:Id"`
+	isSubmitted bool
 }
 type Role struct {
 	gorm.Model
@@ -33,10 +34,11 @@ type Document struct {
 
 type PersonalInfo struct {
 	gorm.Model
-	Id                    int     `gorm:"primaryKey;autoIncrement:true;column:id"`
-	User_ID               int     `gorm:"not null;column:user_id;unique"`
-	Email                 string  `gorm:"uniqueIndex:true;not null;column:email;unique"`
-	Address               string  `gorm:"uniqueIndex:true;not null;column:address;unique"`
+	Id      int    `gorm:"primaryKey;autoIncrement:true;column:id"`
+	User_ID int    `gorm:"not null;column:user_id;unique"`
+	Email   string `gorm:"uniqueIndex:true;not null;column:email;unique"`
+	Address string `gorm:"uniqueIndex:true;not null;column:address;unique"`
+	//DateOfBirth
 	PhoneNumber           string  `gorm:"uniqueIndex:true;not null;column:phonenumber;unique"`
 	National_ID           string  `gorm:"uniqueIndex:true;not null;column:national_id;unique"` //0922001
 	Passport_No           string  `gorm:"uniqueIndex:true;not null;column:passport_no;unique"` //N039580

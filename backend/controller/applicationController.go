@@ -18,27 +18,30 @@ func ApplyApplication(c *gin.Context) {
 	}
 	user, err := c.Get("user")
 	if !err {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Notauthorized"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Notauthorized", "status": false})
 		return
 	}
 	userInstance, ok := user.(model.User)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error", "status": false})
 		return
 	}
 	userRole := userInstance.Role.Role_Name
 	userId := userInstance.Id
 	if err := c.BindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error Occur"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Error Occur", "status": false})
 		return
 	}
 	application := model.Application{Program_ID: body.Program_ID, User_ID: userId, SubmittedAt: time.Now(), Status: string(model.PENDING)}
 	if userRole != "user" {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized", "status": false})
 		return
 	}
-	initializers.DB.Create(&application)
-	c.JSON(http.StatusOK, gin.H{"messsage": "Done with creating"})
+	isOk := initializers.DB.Create(&application)
+	if isOk != nil {
+		c.JSON(http.StatusOK, gin.H{"messsage": "Error with creating", "status": false})
+	}
+	c.JSON(http.StatusOK, gin.H{"messsage": "Done with creating", "status": true})
 }
 
 func AcceptApplication(c *gin.Context) {
@@ -147,14 +150,14 @@ func ViewAppliedApplication(c *gin.Context) { // Remodify by displaying all the
 	}
 	userInstance, ok := user.(model.User)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server error", "status": false})
 		return
 	}
 	userId := userInstance.Id
 
 	var application model.Application
 	if err := initializers.DB.Where("user_id=?", userId).First(&application).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Application not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Application not found", "status": true})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": application})

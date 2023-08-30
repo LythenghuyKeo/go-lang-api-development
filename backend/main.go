@@ -17,10 +17,12 @@ func main() {
 	initializers.SyncDatabase()
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
-	config.AllowHeaders = []string{"Origin,Content-Type,Accept"}
+	config.AllowCredentials = true
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin,Content-Type,Accept,Authorization"}
 
+	router.Use(cors.New(config))
 	//Authentication route
 	authroute := router.Group("/")
 	routes.SetupAuthRoute(authroute)

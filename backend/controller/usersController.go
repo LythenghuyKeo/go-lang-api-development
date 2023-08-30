@@ -37,12 +37,14 @@ func SignUp(c *gin.Context) {
 	result := initializers.DB.Create(&user)
 	if result == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "cant create User",
+			"message":  "cant create User",
+			"Register": false,
 		})
 		return
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "can create User",
+			"message":  "can create User",
+			"Register": true,
 		})
 		return
 	}
@@ -64,7 +66,7 @@ func LogIn(c *gin.Context) {
 	// c.JSON(http.StatusBadRequest, gin.H{"message": is_password})
 	// return
 	if is_password != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Please enter password/email again"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Please enter password/email again", "Log in": false})
 		return
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
@@ -74,12 +76,12 @@ func LogIn(c *gin.Context) {
 	})
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid email or password"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid email or password", "Log in": false})
 		return
 	}
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	c.JSON(http.StatusOK, gin.H{"message": tokenString, "Log in": true})
 
 }
 func Validate(c *gin.Context) {
@@ -93,5 +95,5 @@ func Validate(c *gin.Context) {
 }
 func LogOut(c *gin.Context) {
 	c.SetCookie("Authorization", "", -1, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, gin.H{"token": "Log out successfully !"})
+	c.JSON(http.StatusOK, gin.H{"token": "Log out successfully !", "Log out": true})
 }
