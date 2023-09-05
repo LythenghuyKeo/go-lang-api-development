@@ -28,20 +28,18 @@ type Document struct {
 	Id            int    `gorm:"primaryKey;column:id;"`
 	User_ID       int    `gorm:"not null;column:user_id;unique"`
 	Document_type string `gorm:"not null;column:document_type"`
-	Document_file string `gorm:"not null;column:document_file"`
+	Document_file []byte `gorm:"not null;column:document_file"`
 	User          User
 }
 
 type PersonalInfo struct {
 	gorm.Model
-	Id      int    `gorm:"primaryKey;autoIncrement:true;column:id"`
-	User_ID int    `gorm:"not null;column:user_id;unique"`
-	Email   string `gorm:"uniqueIndex:true;not null;column:email;unique"`
-	Address string `gorm:"uniqueIndex:true;not null;column:address;unique"`
-	//DateOfBirth
+	Id                    int     `gorm:"primaryKey;autoIncrement:true;column:id"`
+	User_ID               int     `gorm:"not null;column:user_id;unique"`
+	Email                 string  `gorm:"uniqueIndex:true;not null;column:email;unique"`
+	Address               string  `gorm:"uniqueIndex:true;not null;column:address;unique"`
 	PhoneNumber           string  `gorm:"uniqueIndex:true;not null;column:phonenumber;unique"`
-	National_ID           string  `gorm:"uniqueIndex:true;not null;column:national_id;unique"` //0922001
-	Passport_No           string  `gorm:"uniqueIndex:true;not null;column:passport_no;unique"` //N039580
+	National_ID           string  `gorm:"uniqueIndex:true;not null;column:national_id;unique"` //092200
 	HighSchool            string  `gorm:"not null;column:highschool_name;"`                    //High School Name
 	HighSchool_Grade      string  `gorm:";not null;column:highschool_grade;"`                  //A,B,C
 	Grade_Scale           float64 `gorm:"not null;column:grade_scale;"`                        //99.0484...

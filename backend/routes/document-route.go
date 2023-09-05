@@ -12,8 +12,8 @@ func SetUpDocumentRoute(c *gin.RouterGroup) {
 	{
 		document.Use(middleware.RequireAuth)
 		document.POST("/upload", controller.ApplyApplication)
-		document.PUT("/update", controller.UpdateUploadedDocument)
-		document.GET("/view", controller.ViewDocument)
+		// document.PUT("/update", controller.UpdateUploadedDocument)
+		// document.GET("/view", controller.ViewDocument)
 
 	}
 }

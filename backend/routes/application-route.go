@@ -16,6 +16,7 @@ func SetUpApplicationRoute(c *gin.RouterGroup) {
 		application.PUT("/:id/rejected", controller.RejectApplication)
 		application.GET("/view_application", controller.GetAllApplication)
 		application.GET("/my_application", controller.ViewAppliedApplication)
+		application.GET("/get_all_student_application/:id", controller.GetMyStudentApplication)
 
 	}
 }

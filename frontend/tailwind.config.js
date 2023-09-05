@@ -11,7 +11,9 @@ module.exports = {
       "green":'#15803d',
       'gray':'#9ca3af',
       'darkgreen':'#438845',
-      'lightred':'#FFB4AD'
+      'lightred':'#FFB4AD',
+      'bgray':'#575757',
+      'black':'#000000'
     },
     fontFamily: {
       'poppins': ['Poppins'],

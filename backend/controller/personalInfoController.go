@@ -15,7 +15,6 @@ func AddPersonalInfo(c *gin.Context) {
 		Address               string
 		PhoneNumber           string
 		National_ID           string  //0922001
-		Passport_No           string  //N039580
 		HighSchool            string  //High School Name
 		HighSchool_Grade      string  //A,B,C
 		Grade_Scale           float64 //99.0484...
@@ -24,39 +23,35 @@ func AddPersonalInfo(c *gin.Context) {
 		Telegram_URL          string
 	}
 	nationalIdRegex := regexp.MustCompile(`\d{9}$`)
-	passportNumberRegex := regexp.MustCompile(`^[A-Z0-9]{9}$`)
 	highSchoolGrade := regexp.MustCompile(`^[A-E]$`)
 	emailRegEx := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	user, err := c.Get("user")
 	if !err {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Notauthorized"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Notauthorized", "status": false})
 		return
 	}
 	userInstance, ok := user.(model.User)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error", "status": false})
 		return
 	}
 	userRole := userInstance.Role.Role_Name
 	userId := userInstance.Id
 	if err := c.BindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error Occur"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Error Occur", "status": false})
 		return
 	}
 	if !nationalIdRegex.MatchString(body.National_ID) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Invalid National ID Number"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid National ID Number", "status": false})
 		return
 	}
-	if !passportNumberRegex.MatchString(body.Passport_No) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Invalid Passport Number"})
-		return
-	}
+
 	if !highSchoolGrade.MatchString(body.HighSchool_Grade) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Invalid highschool grade"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid highschool grade", "status": false})
 		return
 	}
 	if !emailRegEx.MatchString(body.Email) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Invalid Email Address"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid Email Address", "status": false})
 		return
 	}
 	personalInfo := model.PersonalInfo{
@@ -65,7 +60,6 @@ func AddPersonalInfo(c *gin.Context) {
 		Address:               body.Address,
 		PhoneNumber:           body.PhoneNumber,
 		National_ID:           body.National_ID,
-		Passport_No:           body.Passport_No,
 		HighSchool:            body.HighSchool,
 		HighSchool_Grade:      body.HighSchool_Grade,
 		Grade_Scale:           body.Grade_Scale,
@@ -74,11 +68,11 @@ func AddPersonalInfo(c *gin.Context) {
 		Telegram_URL:          body.Telegram_URL,
 	}
 	if userRole != "user" {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized", "status": false})
 		return
 	}
 	initializers.DB.Create(&personalInfo)
-	c.JSON(http.StatusOK, gin.H{"messsage": "Done with creating"})
+	c.JSON(http.StatusOK, gin.H{"messsage": "Done with creating", "status": true})
 }
 func UpdateUploadedPersonalInfo(c *gin.Context) {
 	var body struct {
@@ -120,7 +114,6 @@ func UpdateUploadedPersonalInfo(c *gin.Context) {
 	personalInfo.PhoneNumber = body.PhoneNumber
 	personalInfo.English_Qualification = body.English_Qualification
 	personalInfo.National_ID = body.National_ID
-	personalInfo.Passport_No = body.Passport_No
 	personalInfo.Grade_Scale = body.Grade_Scale
 	personalInfo.HighSchool = body.HighSchool
 	personalInfo.HighSchool_Grade = body.HighSchool_Grade
@@ -163,8 +156,8 @@ func ViewPersonalInfo(c *gin.Context) {
 
 	var personalInfo model.PersonalInfo
 	if err := initializers.DB.Where("user_id=?", userId).First(&personalInfo).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Application not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Application not found", "status": false})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": personalInfo})
+	c.JSON(http.StatusOK, gin.H{"message": personalInfo, "status": true})
 }
