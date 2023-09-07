@@ -22,8 +22,6 @@ func AddPersonalInfo(c *gin.Context) {
 		SocialMedia_URL       string
 		Telegram_URL          string
 	}
-	nationalIdRegex := regexp.MustCompile(`\d{9}$`)
-	highSchoolGrade := regexp.MustCompile(`^[A-E]$`)
 	emailRegEx := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	user, err := c.Get("user")
 	if !err {
@@ -41,15 +39,7 @@ func AddPersonalInfo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error Occur", "status": false})
 		return
 	}
-	if !nationalIdRegex.MatchString(body.National_ID) {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid National ID Number", "status": false})
-		return
-	}
 
-	if !highSchoolGrade.MatchString(body.HighSchool_Grade) {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid highschool grade", "status": false})
-		return
-	}
 	if !emailRegEx.MatchString(body.Email) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid Email Address", "status": false})
 		return
@@ -71,8 +61,14 @@ func AddPersonalInfo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized", "status": false})
 		return
 	}
-	initializers.DB.Create(&personalInfo)
-	c.JSON(http.StatusOK, gin.H{"messsage": "Done with creating", "status": true})
+	myerr := initializers.DB.Create(&personalInfo).Error
+	if myerr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": myerr.Error, "status": false})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{"messsage": "Done with creating", "status": true})
+		return
+	}
 }
 func UpdateUploadedPersonalInfo(c *gin.Context) {
 	var body struct {
@@ -158,6 +154,9 @@ func ViewPersonalInfo(c *gin.Context) {
 	if err := initializers.DB.Where("user_id=?", userId).First(&personalInfo).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Application not found", "status": false})
 		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": personalInfo, "status": true})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": personalInfo, "status": true})
+
 }

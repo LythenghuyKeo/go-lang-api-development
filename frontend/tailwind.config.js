@@ -14,6 +14,16 @@ module.exports = {
       'lightred':'#FFB4AD',
       'bgray':'#575757',
       'black':'#000000'
+    },screens: {
+      'phone':'120px',
+      'tablet': '640px',
+      // => @media (min-width: 640px) { ... }
+
+      'laptop': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'desktop': '1280px',
+      // => @media (min-width: 1280px) { ... }
     },
     fontFamily: {
       'poppins': ['Poppins'],

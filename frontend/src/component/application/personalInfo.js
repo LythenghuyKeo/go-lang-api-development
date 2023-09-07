@@ -20,8 +20,24 @@ const PersonalInfoAdd = ()=>{
     const [Telegramurl,setTelegramurl]=useState("")
     const [SocialURL,setSocialURL]=useState("")
     const [data,setData] = useState({});
+    useEffect(()=>{
+        fetch('http://localhost:8080/api/personal_info/view', {
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          })
+            .then((response) => response.json())
+            .then((data) => {
+               if (data['status']){
+                setData(data['message'])
+                setInSavedStatus(true)
+               }else{
+                setInSavedStatus(false)
+               }
+            });
+      })
 
     const handleSubmit = async(e)=>{
+        e.preventDefault();
       try{
         const response = await fetch('http://localhost:8080/api/personal_info/upload',{
            method:'POST',
@@ -31,7 +47,7 @@ const PersonalInfoAdd = ()=>{
           JSON.stringify({
               email:Email,
               address:Address,
-              phonenumber:"PhoneNumber",
+              phonenumber:(Math.random()*1000).toString(),
               national_id:IdentityId,
               highschool:HighSchoolName,
               highschool_grade:HighSchoolGrade,
@@ -44,6 +60,7 @@ const PersonalInfoAdd = ()=>{
            })
         })
         const data = await response.json();
+        console.log(data)
         if (data['status']){
            history.push('/home');
         }else{
@@ -71,21 +88,7 @@ const PersonalInfoAdd = ()=>{
                 console.log(error)
             }
       }
-      useEffect(()=>{
-        fetch('http://localhost:8080/api/personal_info/view', {
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-          })
-            .then((response) => response.json())
-            .then((data) => {
-               if (data['status']){
-                setData(data['message'])
-                setInSavedStatus(true)
-               }else{
-                setInSavedStatus(false)
-               }
-            });
-      })
+
   return (
     <div>
     <nav className='flex justify-between items-center bg-based p-4'>
@@ -93,15 +96,15 @@ const PersonalInfoAdd = ()=>{
       <div className='font-poppins text-3xl font-bold text-white'>KIT</div>
       <button onClick={handleLogOut} className='bg-based text-white px-4 py-2 border rounded font-poppin'>Log out</button>
     </nav>
-    <header className='underline text-center font-bold text-3xl font-poppins mt-10'>
+    <header className='tablet:text-xl tablet:p-3 phone:text-sm laptop:text-3xl underline text-center font-bold  font-poppins mt-10'>
       <h1>ACADEMIC YEAR 2023-2024</h1>
       <h2 className='mt-10'>Application Form</h2>
     </header>
     <body>
-        {isSaved?<body className='pt-10 ' >
+        {isSaved?<body className='pt-10 tablet:text-xl phone:text-xs laptop:text-2xl' >
             <div class='flex flex-col justify-center items-center font-poppins'>
                 <div className='border border-gray p-9 '>
-            <h1 className=' text-2xl font-bold '>Student 's Application</h1>
+            <h1 className=' tablet:text-xl phone:text-sm laptop:text-2xl font-bold '>Student 's Application</h1>
               </div>
               <div>
                 <table class='w-full table-auto font-poppins border mt-10'>
@@ -198,7 +201,7 @@ const PersonalInfoAdd = ()=>{
                     </div>
                     <div className='text-sm w-full'>
                     <label className='block mb-1 text-bgray font-bold'>Score</label>
-                    <input value={grade_scale} onChange={(e)=>setGradeScale(e.target.value)} type='number' required className='border p-2 rounded-xl border-gray w-60'></input>
+                    <input value={grade_scale} onChange={(e)=>setGradeScale(e.target.value)} type='text' required className='border p-2 rounded-xl border-gray w-60'></input>
                     </div>
                     <div className='text-sm w-full'>
                     <label className='block mb-1 text-bgray font-bold'>Rank</label>
@@ -264,8 +267,8 @@ const PersonalInfoAdd = ()=>{
         <div className='text-white text-center font-poppins text-l w-full max-w-screen-xl p-4 ' >
         © Kirirom Institute of Technology 
         </div>
-        <div className='container pt-9 mb-9 '>
-            <div class="mb-9 flex  justify-center">
+        <div className='container pt-9 laptop:mb-9 tablet:mb-4 phone:mb-2'>
+            <div class="laptop:mb-9 phone:mb-2 flex  justify-center">
                <img src={facebook} className='w-6 h-6 mb-9 ml-3 mr-3 '></img>
                <img src={youtube} className='w-6 h-6 ml-3 mr-3 '></img>
                <img src={instagram} className='w-6 h-6 ml-3 mr-3 '></img>

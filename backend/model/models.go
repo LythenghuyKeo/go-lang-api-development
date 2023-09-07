@@ -25,11 +25,12 @@ type Role struct {
 
 type Document struct {
 	gorm.Model
-	Id            int    `gorm:"primaryKey;column:id;"`
-	User_ID       int    `gorm:"not null;column:user_id;unique"`
-	Document_type string `gorm:"not null;column:document_type"`
-	Document_file []byte `gorm:"not null;column:document_file"`
-	User          User
+	Id                 int    `gorm:"primaryKey;column:id;"`
+	User_ID            int    `gorm:"not null;column:user_id;unique"`
+	Transcript         string `gorm:"not null;column:transcipt"`
+	EnglishCertificate string `gorm:"not null;column:englishcertificate"`
+	IdentityDoc        string `gorm:"not null;column:identitydoc"`
+	User               User
 }
 
 type PersonalInfo struct {

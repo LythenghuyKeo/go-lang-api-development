@@ -68,6 +68,23 @@ const ApplicationForm = () => {
            }
         });
   })
+  useEffect(()=>{
+    fetch('http://localhost:8080/api/document/view', {
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
+        .then((response) => response.json())
+        .then((data) => {
+           if (data['status']){
+            const updatedData =[...applicationContents];
+            updatedData[2]={...updatedData[2],status:true}
+            setApplicationContents(updatedData);
+            setMyrole("user")
+           }else{
+            setMyrole("user")
+           }
+        });
+  })
 
 //   const handleProgram = async(value)=>{
 
@@ -180,7 +197,7 @@ const ApplicationForm = () => {
         {/* <button class='border rounded-full bg-based text-white font-extrabold p-4'>
           Submit
         </button> */}
-        <div>{isDone?(<p class='font-bold font-poppin'>Click here to see your status :<Link to='/mystatus' className='text-based' >My Status</Link></p>):(<p class=' font-bold font-poppin'>Click here to see your status : My Status</p>)}</div>
+        <div>{(applicationContents[0].status===applicationContents[1].status===applicationContents[2].status)?(<p class='font-bold font-poppin'>Click here to see your status :<Link to='/mystatus' className='text-based' >My Status</Link></p>):(<p class=' font-bold font-poppin'></p>)}</div>
       </div>
 
       <footer className='bg-based m-4'>
